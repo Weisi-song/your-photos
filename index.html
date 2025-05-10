@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>时光的标本簿——致妈妈</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
+            font-family: 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif;
+            background: #222;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .bg {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            width: 100vw;
+            height: 100vh;
+            background: url('your-image.PNG') center center/cover no-repeat;
+            z-index: 0;
+            filter: brightness(0.85) blur(0px);
+            transition: filter 0.5s;
+        }
+        .mask {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255,255,255,0.25);
+            z-index: 1;
+        }
+        .main-center {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 0;
+        }
+        .center-card {
+            position: relative;
+            background: rgba(255,255,255,0.7);
+            border-radius: 18px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+            padding: 80px 28px 36px 28px;
+            max-width: 90vw;
+            min-width: 320px;
+            z-index: 2;
+            text-align: center;
+            transition: opacity 0.5s;
+            margin-top: 0;
+            margin-bottom: 32px;
+            overflow-y: auto;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        h1, h2, h3 {
+            font-weight: 700;
+            margin: 0 0 18px 0;
+            color: #2d3a4b;
+        }
+        .subtitle {
+            font-size: 1.1em;
+            color: #5b6b7a;
+            margin-bottom: 18px;
+        }
+        .btn {
+            margin-top: 24px;
+            padding: 12px 32px;
+            background: #f7c873;
+            color: #2d3a4b;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: background 0.2s;
+        }
+        .btn:hover {
+            background: #ffe1a8;
+        }
+        .chapter {
+            margin-bottom: 32px;
+        }
+        .videos {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+            justify-content: center;
+            margin-top: 18px;
+        }
+        .video-slot {
+            background: rgba(255,255,255,0.5);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #aaa;
+            font-size: 1em;
+            position: relative;
+            overflow: auto;
+        }
+        .video-slot video, .video-slot iframe {
+            width: auto;
+            height: auto;
+            max-width: 100%;
+            max-height: 70vh;
+            border: none;
+            border-radius: 12px;
+            object-fit: unset;
+        }
+        .end {
+            font-size: 1.2em;
+            color: #2d3a4b;
+            margin-top: 24px;
+        }
+        .chapter-nav {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            display: flex;
+            gap: 12px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 0 0 12px 12px;
+            padding: 10px 18px 6px 18px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .chapter-nav-btn {
+            background: none;
+            border: none;
+            color: #2d3a4b;
+            font-size: 1em;
+            padding: 6px 10px;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+        .chapter-nav-btn.active, .chapter-nav-btn:hover {
+            background: #f7c873;
+        }
+        @media (max-width: 600px) {
+            .center-card { padding: 70px 4vw 18px 4vw; max-height: 80vh; }
+            .chapter-nav { padding: 8px 4vw 4px 4vw; }
+            .videos { flex-direction: column; gap: 12px; }
+            .video-slot { width: 90vw; height: 180px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg"></div>
+    <div class="mask"></div>
+    <!-- 背景音乐播放器 -->
+    <audio id="bgm" src="ni_kuaile.mp3" loop autoplay preload="auto" style="display:none"></audio>
+    <div id="bgm-control" style="position:fixed;left:24px;bottom:24px;z-index:200;display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.7);border-radius:18px;padding:6px 16px;box-shadow:0 2px 8px rgba(0,0,0,0.10);backdrop-filter:blur(6px);">
+        <button id="bgm-btn" style="background:none;border:none;font-size:1.3em;cursor:pointer;outline:none;">⏸️</button>
+        <span style="font-size:1em;color:#555;">BGM</span>
+    </div>
+    <div class="chapter-nav">
+        <button class="chapter-nav-btn" onclick="showPage('chapter1')" id="nav-ch1">第一章</button>
+        <button class="chapter-nav-btn" onclick="showPage('chapter2')" id="nav-ch2">第二章</button>
+        <button class="chapter-nav-btn" onclick="showPage('chapter3')" id="nav-ch3">第三章</button>
+        <button class="chapter-nav-btn" onclick="showPage('chapter4')" id="nav-ch4">第四章</button>
+    </div>
+    <div class="main-center">
+        <!-- 加载页 -->
+        <div class="center-card" id="loading">
+            <div style="font-size:1.3em;">正在加载标本簿...</div>
+        </div>
+        <!-- 序言页 -->
+        <div class="center-card" id="preface" style="display:none;">
+            <div style="font-size:1.1em;line-height:2;">
+                晨光穿过记忆的棱镜，<br>
+                将你的身影折射成无数个温柔的截面——<br>
+                踮脚触碰花的指尖，<br>
+                随着炖菜香气摇曳的长发，<br>
+                还有总在玄关处故意慢三拍的"路上小心"。<br>
+                我们擅自把这些光斑收集起来，<br>
+                做为我们的标本集：<br>
+            </div>
+            <button class="btn" onclick="showPage('home')">进入主页</button>
+        </div>
+        <!-- 主页导航 -->
+        <div class="center-card" id="home" style="display:none;">
+            <h1>时光的标本簿</h1>
+            <div class="subtitle">最后那页永远空着，因为您此刻正往相册里添新的星辰。</div>
+            <button class="btn" onclick="showPage('chapter1')">打开标本簿 进入我们的回忆</button>
+        </div>
+        <!-- 第一章 -->
+        <div class="center-card" id="chapter1" style="display:none;">
+            <h2>第一章：她自己 · 追光的少女</h2>
+            <div class="subtitle">她曾也是云，轻盈而自由，<br>在风里写诗，在雨中漫游。<br>后来她成了港湾，成了家，<br>但照片里，仍藏着未说完的童话</div>
+            <div class="videos">
+                <div class="video-slot"><video controls src="ma1.MOV"></video></div>
+                <div class="video-slot"><video controls src="ma2.MOV"></video></div>
+            </div>
+            <div style="margin-top:18px;display:flex;justify-content:space-between;width:100%;">
+                <span></span>
+                <button class="btn" onclick="showPage('chapter2')">下一章</button>
+            </div>
+        </div>
+        <!-- 第二章 -->
+        <div class="center-card" id="chapter2" style="display:none;">
+            <h2>第二章：身为妈妈的女儿 · 血脉里的守望</h2>
+            <div class="subtitle">"记得吃饭"在电话那头<br>"早点休息"在微信这头<br>厨房的油烟机轰轰响<br>嬷嬷一边炒菜一边讲：<br>"你小时候啊..."<br>你把排骨夹进我的碗中央</div>
+            <div class="videos">
+                <div class="video-slot"><video controls src="dad.MOV"></video></div>
+                <div class="video-slot"><video controls src="fam.MOV"></video></div>
+            </div>
+            <div style="margin-top:18px;display:flex;justify-content:space-between;width:100%;">
+                <button class="btn" onclick="showPage('chapter1')">上一章</button>
+                <button class="btn" onclick="showPage('chapter3')">下一章</button>
+            </div>
+        </div>
+        <!-- 第三章 -->
+        <div class="center-card" id="chapter3" style="display:none;">
+            <h2>第三章：第一次成为妈妈 · 永不枯萎的春天</h2>
+            <div class="subtitle">你把一生种成一片土壤，<br>我不过是其中一朵花。<br>当我说"爱"，你总笑着摇头——<br>"春天哪需要报答？"</div>
+            <div class="videos">
+                <div class="video-slot"><video controls src="ni.MOV"></video></div>
+                <div class="video-slot"><video controls src="2zhen.MOV"></video></div>
+            </div>
+            <div style="margin-top:18px;display:flex;justify-content:space-between;width:100%;">
+                <button class="btn" onclick="showPage('chapter2')">上一章</button>
+                <button class="btn" onclick="showPage('chapter4')">下一章</button>
+            </div>
+        </div>
+        <!-- 第四章 -->
+        <div class="center-card" id="chapter4" style="display:none;">
+            <h2>第四章：我们这一家 · 围成圆的宇宙</h2>
+            <div class="subtitle">一双手 = 屋檐，<br>唠叨 × 沉默 = 年轮。<br>而我们相加的每一个朝夕，<br>都是时光除不尽的余数。</div>
+            <div class="videos">
+                <div class="video-slot"><video controls src="fri.MOV"></video></div>
+                <div class="video-slot"><video controls src="aunt.MOV"></video></div>
+            </div>
+            <div style="margin-top:18px;display:flex;justify-content:space-between;width:100%;">
+                <button class="btn" onclick="showPage('chapter3')">上一章</button>
+                <button class="btn" onclick="showPage('end')">结束展览</button>
+            </div>
+        </div>
+        <!-- 结束页 -->
+        <div class="center-card" id="end" style="display:none;">
+            <div class="end">
+                谨以此标本集给<br>
+                <b>张彩枫女士</b><br>
+                1979-∞<br>
+                您把岁月折成纸船，<br>
+                载着我们三个小小的影子，<br>
+                在时光里轻轻漂着。<br>
+                母亲节快乐——<br>
+                愿您眼里的星辰，<br>
+                永远明亮如初。
+            </div>
+            <button class="btn" style="margin-top:32px;" onclick="showPage('home')">回到首页 重新观看</button>
+        </div>
+    </div>
+    <script>
+        // 页面切换逻辑
+        function showPage(page) {
+            const ids = ['loading','preface','home','chapter1','chapter2','chapter3','chapter4','end'];
+            ids.forEach(id => document.getElementById(id).style.display = 'none');
+            document.getElementById(page).style.display = 'block';
+            // 顶部导航高亮
+            for(let i=1;i<=4;i++){
+                document.getElementById('nav-ch'+i).classList.remove('active');
+            }
+            if(page.startsWith('chapter')){
+                let idx = page.replace('chapter','');
+                if(document.getElementById('nav-ch'+idx))
+                    document.getElementById('nav-ch'+idx).classList.add('active');
+            }
+        }
+        // 加载页自动跳转到序言
+        setTimeout(()=>{ showPage('preface'); }, 1800);
+        // BGM控制
+        const bgm = document.getElementById('bgm');
+        const bgmBtn = document.getElementById('bgm-btn');
+        let bgmPlaying = true;
+        bgm.volume = 0.5;
+        bgmBtn.onclick = function() {
+            if(bgmPlaying){
+                bgm.pause();
+                bgmBtn.textContent = '▶️';
+            }else{
+                bgm.play();
+                bgmBtn.textContent = '⏸️';
+            }
+            bgmPlaying = !bgmPlaying;
+        };
+        // 自动播放兼容性处理
+        window.addEventListener('touchstart', function once(){
+            if(bgm.paused){ bgm.play(); }
+            window.removeEventListener('touchstart', once);
+        });
+    </script>
+</body>
+</html> 
